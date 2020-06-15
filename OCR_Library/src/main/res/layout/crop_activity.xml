@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <!--    <ImageView-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:id="@+id/cropImageView">-->
+    <!--    </ImageView>-->
+
+    <!--    <com.theartofdev.edmodo.cropper.CropImageView-->
+    <!--        xmlns:custom="http://schemas.android.com/apk/res-auto"-->
+    <!--        android:id="@+id/cropImageView"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="0dp"-->
+    <!--        android:layout_weight="1"/>-->
+
+    <com.theartofdev.edmodo.cropper.CropImageView xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cropImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        custom:cropBorderCornerColor="#1088DE"
+        custom:cropBorderLineColor="#1088DE"
+        custom:cropBorderLineThickness="2dp" />
+
+    <RelativeLayout
+        android:id="@+id/navigation_header_container"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="#000000">
+
+        <Button
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:text="Back"
+            android:textColor="#ffffff"
+            android:background="@null"
+            android:backgroundTint="#000000">
+
+        </Button>
+
+        <Button
+            android:id="@+id/use"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:text="Use"
+            android:textColor="#ffffff"
+            android:background="@null"
+            android:backgroundTint="#000000"></Button>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Please select the area to recognize"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:textColor="#ffffff"></TextView>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/image_tools"
+            android:layout_width="350dp"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="30dp"
+            android:layout_marginBottom="50dp"
+            android:background="#000000"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/rotate_left"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginLeft="10dp"
+                android:background="@null"
+                android:src="@drawable/ic_rotate_left_black_24dp"
+                android:tint="#ffffff">
+
+            </ImageButton>
+
+            <ImageButton
+                android:id="@+id/rotate_right"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@null"
+                android:src="@drawable/ic_rotate_right_black_24dp"
+                android:tint="#ffffff"></ImageButton>
+
+            <ImageButton
+                android:id="@+id/flip_horizontal"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@null"
+                android:src="@drawable/ic_border_horizontal_black_24dp"
+                android:tint="#ffffff"></ImageButton>
+
+            <ImageButton
+                android:id="@+id/flip_vertical"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@null"
+                android:src="@drawable/ic_border_vertical_black_24dp"
+                android:tint="#ffffff"></ImageButton>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "982471021757",
+    "firebase_url": "https://ocrlibrary-2d0cd.firebaseio.com",
+    "project_id": "ocrlibrary-2d0cd",
+    "storage_bucket": "ocrlibrary-2d0cd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:982471021757:android:5234bc9c5f9e642d2ad3d4",
+        "android_client_info": {
+          "package_name": "com.example.ocrlibrary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "982471021757-ag66se680b2a8ffh2lspd50qstlpp65j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYTqkT-VN36K_HdYxwW71abWLc0I62Ii4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "982471021757-ag66se680b2a8ffh2lspd50qstlpp65j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

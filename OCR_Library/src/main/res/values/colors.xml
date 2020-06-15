@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="qr_code_reader_square">#ffcc0000</color>
+    <color name="barcodeScanner_overlayMask">#60000000</color>
+    <color name="barcodeScanner_overlayLaser">#ffcc0000</color>
+</resources>

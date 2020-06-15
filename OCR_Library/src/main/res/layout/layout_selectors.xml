@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/camera_screen"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/boundry_qrcode"
+        android:layout_width="280dp"
+        android:layout_height="250dp"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="150dp"
+        android:background="@drawable/layout_qrcode"
+        android:visibility="invisible"></View>
+
+    <ImageButton
+        android:id="@+id/close_Btn"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@null"
+        android:src="@drawable/ic_close_black_24dp"
+        android:tint="#000000"></ImageButton>
+
+    <ImageButton
+        android:id="@+id/flash_btn"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@null"
+        android:src="@drawable/ic_flash_on_black_24dp"
+        android:tint="#000000"></ImageButton>
+
+    <TextView
+        android:id="@+id/scannerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Place the barcode in the center of the viewfinder to scan it"
+        android:layout_centerHorizontal="true"
+        android:textColor="#ffffff"
+        android:layout_above="@+id/overlay_qrCode"
+        android:layout_marginBottom="40dp"
+        android:visibility="invisible"></TextView>
+
+
+    <!--        BarCode Bottom Overlay-->
+    <RelativeLayout
+        android:id="@+id/overlay_barcode"
+        android:layout_width="380dp"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="70dp"
+        android:background="@drawable/layout_bg">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerHorizontal="true"
+                android:background="@null"
+                android:backgroundTint="#000000"
+                android:text="ERA"
+                android:textColor="#ffffff"
+                android:textSize="15dp"></TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="60dp"
+                android:background="@null"
+                android:backgroundTint="#000000"
+                android:text="QR CODE"
+                android:textColor="#ffffff"
+                android:textSize="15dp"></TextView>
+
+            <TextView
+                android:id="@+id/center_textview_barcode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="50dp"
+                android:background="@null"
+                android:backgroundTint="#000000"
+                android:text="BAR CODE"
+                android:textColor="#1088DE"
+                android:textSize="15dp"></TextView>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+    <!--    qr code bottom overlay-->
+
+    <RelativeLayout
+        android:id="@+id/overlay_qrCode"
+        android:layout_width="380dp"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="70dp"
+        android:background="@drawable/layout_bg">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="70dp"
+                android:background="@null"
+                android:backgroundTint="#000000"
+                android:text="CAMERA"
+                android:textColor="#ffffff"
+                android:textSize="15dp"></TextView>
+
+            <TextView
+                android:id="@+id/center_textview_qrcode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="60dp"
+                android:background="@null"
+                android:backgroundTint="#000000"
+                android:text="QR CODE"
+                android:textColor="#1088DE"
+                android:textSize="15dp"></TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="250dp"
+                android:layout_marginRight="15dp"
+                android:background="@null"
+                android:backgroundTint="#000000"
+                android:text="BAR CODE"
+                android:textColor="#ffffff"
+                android:textSize="15dp"></TextView>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <!--    camera bottom overlay-->
+
+    <RelativeLayout
+        android:id="@+id/overlay_camera"
+        android:layout_width="380dp"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="70dp"
+        android:background="@drawable/layout_bg">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/center_textview_camera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:background="@null"
+                android:backgroundTint="#000000"
+                android:text="CAMERA"
+                android:textColor="#1088DE"
+                android:textSize="15dp"></TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="240dp"
+                android:background="@null"
+                android:backgroundTint="#000000"
+                android:text="QR CODE"
+                android:textColor="#ffffff"
+                android:textSize="15dp"></TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="320dp"
+                android:background="@null"
+                android:backgroundTint="#000000"
+                android:text="BAR CO"
+                android:textColor="#ffffff"
+                android:textSize="15dp"></TextView>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/capture_gallary_Btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="32dp"
+            android:background="#000000">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
+                android:layout_toLeftOf="@+id/captureButton"
+                android:text="AUTO"
+                android:textColor="#ffffff"></TextView>
+
+            <ImageButton
+                android:id="@+id/captureButton"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:background="@null"
+                android:src="@drawable/ic_camera_alt_black_24dp"
+                android:tint="#ffffff"></ImageButton>
+
+            <ImageButton
+                android:id="@+id/gallary"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/captureButton"
+                android:background="#00FFFFFF"
+                android:src="@drawable/ic_photo_black_24dp"
+                android:tint="#ffffff"></ImageButton>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

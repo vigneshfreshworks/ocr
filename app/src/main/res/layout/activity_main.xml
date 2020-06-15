@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+    <RelativeLayout
+        android:id="@+id/nameview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:gravity="center">
+
+        <EditText
+            android:id="@+id/name"
+            android:layout_width="390dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:ellipsize="end"
+            android:hint="Asset Name"
+            android:inputType="textNoSuggestions|textVisiblePassword"
+            android:maxLines="1"></EditText>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/imagePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true">
+
+        <RelativeLayout
+            android:id="@+id/scanText"
+            android:layout_width="370dp"
+            android:layout_height="40dp"
+            android:background="#000000">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:gravity="fill_vertical"
+                android:text="Tap to scan and autofill using OCR"
+                android:textColor="#FFFFFF"
+                android:textSize="20dp"></TextView>
+
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/scanText"
+            android:background="#000000"
+            android:src="@drawable/ic_filter_center_focus_black_24dp"
+            android:tint="#ffffff"></ImageView>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/bottomView"
+        android:visibility="invisible">
+
+        <LinearLayout
+            android:id="@+id/suggestionsCard"
+            android:layout_width="370dp"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <HorizontalScrollView
+                android:id="@+id/scrollView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:background="#000000">
+
+                <LinearLayout
+                    android:id="@+id/suggestionsList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentBottom="true"
+                    android:background="#000000"
+                    android:orientation="horizontal">
+                </LinearLayout>
+            </HorizontalScrollView>
+
+        </LinearLayout>
+
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@id/suggestionsCard"
+            android:background="#000000"
+            android:src="@drawable/ic_crop_original_black_24dp"
+            android:tint="#ffffff"
+            android:id="@+id/start_image_activity">
+
+        </ImageButton>
+
+    </RelativeLayout>
+
+</RelativeLayout>
+
+
