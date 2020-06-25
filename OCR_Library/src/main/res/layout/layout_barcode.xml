@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="600dp"
-        android:text="Place the barcode in the center of the viewfinder rectangle to scan it"
+        android:text="@string/barcode_text"
         android:gravity="center"
         android:textColor="#ffffff">
     </TextView>

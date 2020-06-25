@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">OCRLIbrary</string>
+    <string name="qrcode_scannertext">place the barcode in the center of the viewfinder to scan it</string>
+    <string name="crop_text">Please select the area to recognize</string>
+    <string name="crop_back">BACK</string>
+    <string name="crop_use">USE</string>
+    <string name="highlight_text">Please highlight the area to use as field value</string>
+    <string name="highlight_retake">RETAKE</string>
+    <string name="barcode_text">Place the barcode in the center of the viewfinder rectangle to scan it</string>
 </resources>

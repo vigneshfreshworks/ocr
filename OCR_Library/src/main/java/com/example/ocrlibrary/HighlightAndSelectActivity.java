@@ -50,6 +50,7 @@ public class HighlightAndSelectActivity extends AppCompatActivity implements Vie
     Uri uri;
     RescaleBitmap rescaleBitmap = new RescaleBitmap();
     String fromHighlightActivity = "com.example.ocrlibrary.CropActivity.isStartedFromHighlightActivity";
+    int HIGHLIGHT_CROPVIEW_REQUESTCODE = 7;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +90,7 @@ public class HighlightAndSelectActivity extends AppCompatActivity implements Vie
             public void onClick(View v) {
                 Intent intent = new Intent(HighlightAndSelectActivity.this, CameraViewActivity.class);
                 fromHighlightActivity = "true";
-                startActivityForResult(intent,7);
+                startActivityForResult(intent,HIGHLIGHT_CROPVIEW_REQUESTCODE);
             }
         });
 
@@ -278,7 +279,7 @@ public class HighlightAndSelectActivity extends AppCompatActivity implements Vie
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==7 && resultCode==RESULT_OK) {
+        if(requestCode==HIGHLIGHT_CROPVIEW_REQUESTCODE && resultCode==RESULT_OK) {
             Intent intent = new Intent();
             intent.putExtra("captured Texts", resultView.getText().toString().trim());
             Uri uri = (Uri) data.getExtras().get("croppeduri");
@@ -287,10 +288,10 @@ public class HighlightAndSelectActivity extends AppCompatActivity implements Vie
             setResult(Activity.RESULT_OK, intent);
             finish();
         }
-        else if(requestCode==7 && resultCode==RESULT_CANCELED) {
+        else if(requestCode==HIGHLIGHT_CROPVIEW_REQUESTCODE && resultCode==101) {
             Intent intent = new Intent();
             intent.putExtra("result",(String) data.getExtras().get("result"));
-            setResult(Activity.RESULT_CANCELED, intent);
+            setResult(101, intent);
             finish();
         }
     }

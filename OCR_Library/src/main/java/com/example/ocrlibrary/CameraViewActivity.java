@@ -3,9 +3,7 @@ package com.example.ocrlibrary;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,7 +14,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -26,8 +23,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.ml.vision.FirebaseVision;
@@ -117,7 +112,6 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
                     @Override
                     public void onBitmapReady(@Nullable Bitmap bitmap) {
                         Bitmap map = bitmap;
-                        Log.i("Bitmap", "" + map);
                         Uri uri = getImageUri(bitmap);
                         Intent intent = new Intent(CameraViewActivity.this, CropActivity.class);
                         intent.putExtra("uri", uri);
@@ -200,7 +194,7 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
                                 }
                                 Intent intent = new Intent();
                                 intent.putExtra("result", scannerResult);
-                                setResult(Activity.RESULT_CANCELED, intent);
+                                setResult(101, intent);
                                 finish();
                             }
                         }
@@ -208,7 +202,7 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(CameraViewActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            // Log
                         }
                     });
         }
@@ -264,7 +258,6 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
         float[] positions = new float[2];
         positions[0] = e.getX();
         positions[1] = e.getY();
-        Log.i("called", "onDown" + Arrays.toString(positions));
         return false;
     }
 
@@ -278,7 +271,6 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
         float[] positions = new float[2];
         positions[0] = e.getX();
         positions[1] = e.getY();
-        Log.i("called", "onDown" + positions.toString());
         return false;
     }
 
@@ -401,9 +393,10 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
         startActivityForResult(intent, IMAGE_PICK_CODE);
     }
 
-    @SuppressLint("MissingSuperCall")
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == IMAGE_PICK_CODE) {
             Intent intent = new Intent(CameraViewActivity.this, CropActivity.class);
             intent.putExtra("uri", data.getData());
@@ -429,7 +422,6 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
 
     public String getRealPathFromURI(Uri uri) {
         String[] projection = {MediaStore.Images.Media.DATA};
-        @SuppressWarnings("deprecation")
         Cursor cursor = managedQuery(uri, projection, null, null, null);
         int column_index = cursor
                 .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SampleApp</string>
+    <string name="scanner_text">Tap to scan and autofill using OCR</string>
 </resources>

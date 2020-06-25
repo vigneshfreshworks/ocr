@@ -3,18 +3,14 @@ package com.example.test;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
@@ -22,13 +18,10 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.example.ocrlibrary.CameraViewActivity;
 import com.example.ocrlibrary.Helper.HeightProvider;
 import com.example.ocrlibrary.Helper.KeyboardUtils;
-import com.example.ocrlibrary.Helper.RescaleBitmap;
 import com.example.ocrlibrary.HighlightAndSelectActivity;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     ImageButton startImageActivity;
     ArrayList<String> suggestionsList = new ArrayList<String>();
     Uri croppedUri;
+    int CAMERA_VIEW_REQUESTCODE = 5;
+    int HIGHLIGHT_VIEW_REQESTCODE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,8 +83,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        //assetName.addTextChangedListener(edtTextWatcher);
-
         for (EditText assetFields : editTextList) {
             assetFields.setOnFocusChangeListener(focusListener);
             assetFields.addTextChangedListener(edtTextWatcher);
@@ -101,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         imagePicker.setVisibility(View.INVISIBLE);
         suggestionsCard.setVisibility(View.INVISIBLE);
-
         suggestionsView.removeAllViews();
 
         KeyboardUtils.addKeyboardToggleListener(this, new KeyboardUtils.SoftKeyboardToggleListener() {
@@ -133,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent1 = new Intent(MainActivity.this, HighlightAndSelectActivity.class);
                 Uri uri = croppedUri;
                 intent1.putExtra("uri", uri);
-                startActivityForResult(intent1, 2);
+                startActivityForResult(intent1, HIGHLIGHT_VIEW_REQESTCODE);
             }
         });
 
@@ -141,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CameraViewActivity.class);
-                startActivityForResult(intent, 5);
+                startActivityForResult(intent, CAMERA_VIEW_REQUESTCODE);
             }
         });
     }
@@ -174,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
                 tv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.i("text", tv.getText().toString());
                         focusedView.setText(tv.getText().toString().trim());
                     }
                 });
@@ -185,25 +176,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @SuppressLint("MissingSuperCall")
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == 2 && resultCode == Activity.RESULT_OK && data.hasExtra("suggestionsList")) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == HIGHLIGHT_VIEW_REQESTCODE && resultCode == Activity.RESULT_OK && data.hasExtra("suggestionsList")) {
             focusedView.setText(data.getStringExtra("captured Texts"));
             if (!data.getStringArrayListExtra("suggestionsList").isEmpty()) {
                 suggestionsList = data.getStringArrayListExtra("suggestionsList");
                 croppedUri = (Uri) data.getExtras().get("uri");
             }
         }
-        if (requestCode == 2 && resultCode == Activity.RESULT_CANCELED) {
+        if (requestCode == HIGHLIGHT_VIEW_REQESTCODE && resultCode == 101 ) {
             focusedView.setText(data.getStringExtra("result"));
         }
 
-        if (requestCode == 5 && resultCode == Activity.RESULT_CANCELED) {
-            focusedView.setText(data.getStringExtra("result"));
+        if (requestCode == CAMERA_VIEW_REQUESTCODE && resultCode == 101) {
+                focusedView.setText(data.getStringExtra("result"));
         }
-        if (requestCode == 5 && resultCode == Activity.RESULT_OK && data.hasExtra("suggestionsList")) {
+        if (requestCode == CAMERA_VIEW_REQUESTCODE && resultCode == Activity.RESULT_OK && data.hasExtra("suggestionsList")) {
             suggestionsList = data.getStringArrayListExtra("suggestionsList");
             croppedUri = (Uri) data.getExtras().get("croppeduri");
         }

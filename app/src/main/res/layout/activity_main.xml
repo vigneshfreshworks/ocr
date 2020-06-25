@@ -67,7 +67,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:gravity="fill_vertical"
-                android:text="Tap to scan and autofill using OCR"
+                android:text="@string/scanner_text"
                 android:textColor="#FFFFFF"
                 android:textSize="20dp"></TextView>
 
