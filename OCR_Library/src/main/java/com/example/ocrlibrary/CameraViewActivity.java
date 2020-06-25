@@ -63,7 +63,7 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
     public static final int PERMISSION_CODE = 1001;
     static Date currentTime;
     String scannerResult;
-    String isStartedFromHighlightActivity = "false";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
