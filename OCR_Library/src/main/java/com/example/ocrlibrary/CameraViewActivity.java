@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -45,7 +46,6 @@ import com.otaliastudios.cameraview.frame.Frame;
 import com.otaliastudios.cameraview.frame.FrameProcessor;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -67,6 +67,8 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
     public static final int IMAGE_PICK_CODE = 1000;
     public static final int PERMISSION_CODE = 1001;
     static Date currentTime;
+    String scannerResult;
+    String isStartedFromHighlightActivity = "false";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +122,7 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
                         Intent intent = new Intent(CameraViewActivity.this, CropActivity.class);
                         intent.putExtra("uri", uri);
                         intent.putExtra("absolutepath", getRealPathFromURI(uri));
-                        startActivity(intent);
+                        startActivityForResult(intent, 6);
                     }
                 });
 
@@ -189,23 +191,17 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
                     .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionBarcode>>() {
                         @Override
                         public void onSuccess(List<FirebaseVisionBarcode> firebaseVisionBarcodes) {
-                            String s = processResult(firebaseVisionBarcodes);
-                            if (s != null) {
+                            scannerResult = processResult(firebaseVisionBarcodes);
+                            if (scannerResult != null) {
                                 try {
                                     detector.close();
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
-//                                Intent intent = new Intent(CameraViewActivity.this, HighlightAndSelectActivity.class);
-                                Intent intent = null;
-                                try {
-                                    intent = new Intent(CameraViewActivity.this,
-                                            Class.forName("com.example.test.MainActivity"));
-                                } catch (ClassNotFoundException e) {
-                                    e.printStackTrace();
-                                }
-                                intent.putExtra("result", s);
-                                startActivity(intent);
+                                Intent intent = new Intent();
+                                intent.putExtra("result", scannerResult);
+                                setResult(Activity.RESULT_CANCELED, intent);
+                                finish();
                             }
                         }
                     })
@@ -216,7 +212,6 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
                         }
                     });
         }
-
     }
 
     private String processResult(List<FirebaseVisionBarcode> firebaseVisionBarcodes) {
@@ -400,14 +395,6 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
         detector = FirebaseVision.getInstance().getVisionBarcodeDetector(options);
     }
 
-    public Uri getUri(File file) {
-        Uri uri = null;
-        if (file != null) {
-            uri = Uri.fromFile(file);
-        }
-        return uri;
-    }
-
     public void pickImageFromGallary() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
@@ -421,7 +408,15 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
             Intent intent = new Intent(CameraViewActivity.this, CropActivity.class);
             intent.putExtra("uri", data.getData());
             intent.putExtra("absolutepath", getRealPathFromURI(data.getData()));
-            startActivity(intent);
+            startActivityForResult(intent, 6);
+        }
+        if (requestCode == 6 && resultCode == RESULT_OK) {
+            Intent intent = new Intent();
+            Uri uri = (Uri) data.getExtras().get("croppeduri");
+            intent.putStringArrayListExtra("suggestionsList", data.getStringArrayListExtra("suggestionsList"));
+            intent.putExtra("croppeduri", uri);
+            setResult(Activity.RESULT_OK, intent);
+            finish();
         }
     }
 
@@ -441,5 +436,4 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
         cursor.moveToFirst();
         return cursor.getString(column_index);
     }
-
 }

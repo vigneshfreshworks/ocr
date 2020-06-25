@@ -15,12 +15,34 @@
         android:gravity="center">
 
         <EditText
-            android:id="@+id/name"
+            android:id="@+id/asset_name"
             android:layout_width="390dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:ellipsize="end"
             android:hint="Asset Name"
+            android:inputType="textNoSuggestions|textVisiblePassword"
+            android:maxLines="1"></EditText>
+
+        <EditText
+            android:id="@+id/asset_id"
+            android:layout_width="390dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:ellipsize="end"
+            android:hint="Asset Id"
+            android:inputType="textNoSuggestions|textVisiblePassword"
+            android:layout_below="@+id/asset_name"
+            android:maxLines="1"></EditText>
+
+        <EditText
+            android:id="@+id/asset_tag"
+            android:layout_width="390dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:ellipsize="end"
+            android:layout_below="@+id/asset_id"
+            android:hint="Asset Tag"
             android:inputType="textNoSuggestions|textVisiblePassword"
             android:maxLines="1"></EditText>
 

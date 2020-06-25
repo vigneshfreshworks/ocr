@@ -1,8 +1,8 @@
 package com.example.ocrlibrary;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -18,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.ocrlibrary.Helper.GraphicOverlay;
 import com.example.ocrlibrary.Helper.RescaleBitmap;
 import com.example.ocrlibrary.Helper.TextGraphic;
@@ -28,7 +27,6 @@ import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +49,7 @@ public class HighlightAndSelectActivity extends AppCompatActivity implements Vie
     GestureDetector mGestureDetector;
     Uri uri;
     RescaleBitmap rescaleBitmap = new RescaleBitmap();
+    String fromHighlightActivity = "com.example.ocrlibrary.CropActivity.isStartedFromHighlightActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,14 +65,6 @@ public class HighlightAndSelectActivity extends AppCompatActivity implements Vie
         backButton = findViewById(R.id.backButton);
         uri = (Uri) intent.getExtras().get("uri");
         getSupportActionBar().hide();
-        try {
-
-            imageBitmap = rescaleBitmap.getBitmap((Uri) intent.getExtras().get("uri"), getContentResolver());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        iv.setImageBitmap(imageBitmap);
         mGestureDetector = new GestureDetector(this, this);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,10 +88,17 @@ public class HighlightAndSelectActivity extends AppCompatActivity implements Vie
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HighlightAndSelectActivity.this, CameraViewActivity.class);
-                startActivity(intent);
+                fromHighlightActivity = "true";
+                startActivityForResult(intent,7);
             }
         });
 
+        try {
+            imageBitmap = rescaleBitmap.getBitmap(uri, getContentResolver());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        iv.setImageBitmap(imageBitmap);
         captureView.setOnTouchListener(this);
         iv.setOnTouchListener(this);
     }
@@ -277,4 +275,23 @@ public class HighlightAndSelectActivity extends AppCompatActivity implements Vie
         return false;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==7 && resultCode==RESULT_OK) {
+            Intent intent = new Intent();
+            intent.putExtra("captured Texts", resultView.getText().toString().trim());
+            Uri uri = (Uri) data.getExtras().get("croppeduri");
+            intent.putExtra("uri", uri);
+            intent.putStringArrayListExtra("suggestionsList", data.getStringArrayListExtra("suggestionsList"));
+            setResult(Activity.RESULT_OK, intent);
+            finish();
+        }
+        else if(requestCode==7 && resultCode==RESULT_CANCELED) {
+            Intent intent = new Intent();
+            intent.putExtra("result",(String) data.getExtras().get("result"));
+            setResult(Activity.RESULT_CANCELED, intent);
+            finish();
+        }
+    }
 }

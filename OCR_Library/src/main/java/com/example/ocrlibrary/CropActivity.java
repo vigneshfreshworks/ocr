@@ -1,5 +1,6 @@
 package com.example.ocrlibrary;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -13,14 +14,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,10 +38,11 @@ public class CropActivity extends AppCompatActivity {
     ImageButton rotateLeft, rotateRight, flipHorizontal, flipVertical;
     Button useButton, BackButton;
     Uri uri;
-    int CROP_REQUESTCODE = 101;
     ArrayList<String> suggestionsList = new ArrayList<String>();
     FirebaseVisionText textsFromImage;
     static Date currentTime;
+    String isStartedFromHighlightActivity = "false";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +55,7 @@ public class CropActivity extends AppCompatActivity {
         useButton = findViewById(R.id.use);
         BackButton = findViewById(R.id.backButton);
         getSupportActionBar().hide();
-
+        isStartedFromHighlightActivity = "false";
         Intent intent = getIntent();
         uri = (Uri) intent.getExtras().get("uri");
         try {
@@ -69,25 +74,38 @@ public class CropActivity extends AppCompatActivity {
                 Intent intent1 = null;
                 Bitmap croppedBitmap = cropImageView.getCroppedImage();
                 final Uri croppedUri = getImageUri(croppedBitmap);
-                try { 
-                    intent1 = new Intent(CropActivity.this,
-                             Class.forName("com.example.test.MainActivity"));
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    intent1 = new Intent(CropActivity.this,
+//                          Class.forName("com.example.test.MainActivity"));
+//                } catch (ClassNotFoundException e) {
+//                    e.printStackTrace();
+//                }
+                intent1 = new Intent();
                 //final Intent intent1 = new Intent(CropActivity.this, HighlightAndSelectActivity.class);
                 if (croppedBitmap != null) {
                     final FirebaseVisionImage firebaseVisionImage = FirebaseVisionImage.fromBitmap(croppedBitmap);
                     FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance().getOnDeviceTextRecognizer();
-                    final Intent finalIntent = intent1;
                     textRecognizer.processImage(firebaseVisionImage).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
                         @Override
                         public void onSuccess(final FirebaseVisionText firebaseVisionText) {
+                            suggestionsList.clear();
                             textsFromImage = firebaseVisionText;
                             suggestionsList = createSuggestionsFromTexts(textsFromImage);
-                            finalIntent.putStringArrayListExtra("suggestionsList", suggestionsList);
-                            finalIntent.putExtra("croppeduri", croppedUri);
-                            startActivity(finalIntent);
+                            if (isStartedFromHighlightActivity.equalsIgnoreCase("false")) {
+                                Intent mainActivityIntent = new Intent();
+                                mainActivityIntent.putStringArrayListExtra("suggestionsList", suggestionsList);
+                                mainActivityIntent.putExtra("croppeduri", croppedUri);
+                                setResult(Activity.RESULT_OK, mainActivityIntent);
+                                finish();
+                            }
+                            else {
+                                Intent highlightActivityIntent = new Intent(CropActivity.this, HighlightAndSelectActivity.class);
+                                highlightActivityIntent.putStringArrayListExtra("suggestionsList", suggestionsList);
+                                highlightActivityIntent.putExtra("croppeduri", croppedUri);
+                                setResult(Activity.RESULT_OK, highlightActivityIntent);
+                                startActivity(highlightActivityIntent);
+                                isStartedFromHighlightActivity = "false";
+                            }
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override

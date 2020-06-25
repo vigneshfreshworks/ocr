@@ -30,28 +30,43 @@ import com.example.ocrlibrary.Helper.RescaleBitmap;
 import com.example.ocrlibrary.HighlightAndSelectActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText assetName;
+    EditText assetName, assetId, assetTag, focusedView;
     LinearLayout suggestionsView;
     RelativeLayout suggestionsCard, imagePicker;
     ImageButton startImageActivity;
     ArrayList<String> suggestionsList = new ArrayList<String>();
-    Intent intent;
-    Uri uri;
-    Bitmap imageBitmap;
-    RescaleBitmap rescaleBitmap = new RescaleBitmap();
+    Uri croppedUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         imagePicker = findViewById(R.id.imagePicker);
-        assetName = findViewById(R.id.name);
+        assetName = findViewById(R.id.asset_name);
+        assetId = findViewById(R.id.asset_id);
+        assetTag = findViewById(R.id.asset_tag);
         startImageActivity = findViewById(R.id.start_image_activity);
         suggestionsView = findViewById(R.id.suggestionsList);
         suggestionsCard = findViewById(R.id.bottomView);
+
+        List<EditText> editTextList = new ArrayList<EditText>();
+        editTextList.add(assetName);
+        editTextList.add(assetId);
+        editTextList.add(assetTag);
+
+        View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    focusedView = (EditText) v;
+                } else {
+                    focusedView = null;
+                }
+            }
+        };
 
         TextWatcher edtTextWatcher = new TextWatcher() {
             @Override
@@ -72,23 +87,28 @@ public class MainActivity extends AppCompatActivity {
 
             }
         };
-        assetName.addTextChangedListener(edtTextWatcher);
+
+        //assetName.addTextChangedListener(edtTextWatcher);
+
+        for (EditText assetFields : editTextList) {
+            assetFields.setOnFocusChangeListener(focusListener);
+            assetFields.addTextChangedListener(edtTextWatcher);
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        final Intent intent = getIntent();
         imagePicker.setVisibility(View.INVISIBLE);
         suggestionsCard.setVisibility(View.INVISIBLE);
-        if (intent.hasExtra("result")) {
-            assetName.setText(intent.getStringExtra("result"));
-        }
+
+        suggestionsView.removeAllViews();
+
         KeyboardUtils.addKeyboardToggleListener(this, new KeyboardUtils.SoftKeyboardToggleListener() {
             @Override
             public void onToggleSoftKeyboard(boolean isVisible) {
                 if (isVisible) {
-                    if (suggestionsList == null) {
+                    if (suggestionsList.isEmpty()) {
                         imagePicker.setVisibility(View.VISIBLE);
                     } else {
                         suggestionsCard.setVisibility(View.VISIBLE);
@@ -107,16 +127,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        try {
-            suggestionsList = intent.getStringArrayListExtra("suggestionsList");
-        } catch (Exception e) {
-        }
-
         startImageActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent1 = new Intent(MainActivity.this, HighlightAndSelectActivity.class);
-                Uri uri = (Uri) intent.getExtras().get("croppeduri");
+                Uri uri = croppedUri;
                 intent1.putExtra("uri", uri);
                 startActivityForResult(intent1, 2);
             }
@@ -126,14 +141,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CameraViewActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 5);
             }
         });
     }
 
     public void showCustomSuggestions(String s, ArrayList<String> entireList) {
         try {
-            Intent intent = getIntent();
             ArrayList<String> filteredList = new ArrayList<String>();
             ArrayList<TextView> li = new ArrayList<TextView>();
             filteredList.clear();
@@ -161,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Log.i("text", tv.getText().toString());
-                        assetName.setText(tv.getText().toString().trim());
+                        focusedView.setText(tv.getText().toString().trim());
                     }
                 });
             }
@@ -175,13 +189,23 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == 2 && resultCode == Activity.RESULT_OK) {
-            assetName.setText(data.getStringExtra("captured Texts"));
+        if (requestCode == 2 && resultCode == Activity.RESULT_OK && data.hasExtra("suggestionsList")) {
+            focusedView.setText(data.getStringExtra("captured Texts"));
             if (!data.getStringArrayListExtra("suggestionsList").isEmpty()) {
                 suggestionsList = data.getStringArrayListExtra("suggestionsList");
+                croppedUri = (Uri) data.getExtras().get("uri");
             }
-            this.uri = (Uri) data.getExtras().get("uri");
-            imageBitmap = rescaleBitmap.getBitmap(uri, getContentResolver());
+        }
+        if (requestCode == 2 && resultCode == Activity.RESULT_CANCELED) {
+            focusedView.setText(data.getStringExtra("result"));
+        }
+
+        if (requestCode == 5 && resultCode == Activity.RESULT_CANCELED) {
+            focusedView.setText(data.getStringExtra("result"));
+        }
+        if (requestCode == 5 && resultCode == Activity.RESULT_OK && data.hasExtra("suggestionsList")) {
+            suggestionsList = data.getStringArrayListExtra("suggestionsList");
+            croppedUri = (Uri) data.getExtras().get("croppeduri");
         }
     }
 }
