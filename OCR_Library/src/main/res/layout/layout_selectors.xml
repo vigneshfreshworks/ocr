@@ -210,47 +210,124 @@
                 android:text="BAR CO"
                 android:textColor="#ffffff"
                 android:textSize="15dp"></TextView>
-
         </RelativeLayout>
 
+    </RelativeLayout>
+
+<!--    Dynamic Overlay-->
+
+    <RelativeLayout
+        android:id="@+id/overlay_dynamic"
+        android:layout_width="380dp"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="70dp"
+        android:background="@drawable/layout_bg">
+
         <RelativeLayout
-            android:id="@+id/capture_gallary_Btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="32dp"
-            android:background="#000000">
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="15dp"
-                android:layout_toLeftOf="@+id/captureButton"
-                android:text="AUTO"
-                android:textColor="#ffffff"></TextView>
-
-            <ImageButton
-                android:id="@+id/captureButton"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
+                android:layout_marginLeft="70dp"
                 android:background="@null"
-                android:src="@drawable/ic_camera_alt_black_24dp"
-                android:tint="#ffffff"></ImageButton>
+                android:backgroundTint="#000000"
+                android:id="@+id/left"
+                android:textColor="#ffffff"
+                android:textSize="15dp"></TextView>
 
-            <ImageButton
-                android:id="@+id/gallary"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@id/captureButton"
-                android:background="#00FFFFFF"
-                android:src="@drawable/ic_photo_black_24dp"
-                android:tint="#ffffff"></ImageButton>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/center_textview_dynamic"
+                android:layout_marginLeft="240dp"
+                android:layout_centerHorizontal="true"
+                android:background="@null"
+                android:backgroundTint="#000000"
+                android:textColor="#1088DE"
+                android:textSize="15dp"></TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/right"
+                android:layout_marginLeft="250dp"
+                android:background="@null"
+                android:backgroundTint="#000000"
+                android:textColor="#ffffff"
+                android:textSize="15dp"></TextView>
 
         </RelativeLayout>
+
+<!--        <RelativeLayout-->
+<!--            android:id="@+id/dynamic_capture_gallary_Btn"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_centerHorizontal="true"-->
+<!--            android:layout_marginTop="32dp"-->
+<!--            android:background="#000000">-->
+
+<!--            <ImageButton-->
+<!--                android:id="@+id/dynamic_captureButton"-->
+<!--                android:layout_width="120dp"-->
+<!--                android:layout_height="120dp"-->
+<!--                android:layout_centerHorizontal="true"-->
+<!--                android:layout_centerVertical="true"-->
+<!--                android:background="@null"-->
+<!--                android:src="@drawable/ic_camera_alt_black_24dp"-->
+<!--                android:tint="#ffffff"></ImageButton>-->
+
+<!--            <ImageButton-->
+<!--                android:id="@+id/dynamic_gallary"-->
+<!--                android:layout_width="120dp"-->
+<!--                android:layout_height="120dp"-->
+<!--                android:layout_centerVertical="true"-->
+<!--                android:layout_toRightOf="@id/dynamic_captureButton"-->
+<!--                android:background="#00FFFFFF"-->
+<!--                android:src="@drawable/ic_photo_black_24dp"-->
+<!--                android:tint="#ffffff"></ImageButton>-->
+
+<!--        </RelativeLayout>-->
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/capture_gallary_Btn"
+        android:layout_width="380dp"
+        android:layout_height="30dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="80dp"
+        android:background="#000000">
+
+        <ImageButton
+            android:id="@+id/captureButton"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:src="@drawable/ic_camera_alt_black_24dp"
+            android:tint="#ffffff"></ImageButton>
+
+        <ImageButton
+            android:id="@+id/gallary"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/captureButton"
+            android:background="#00FFFFFF"
+            android:src="@drawable/ic_photo_black_24dp"
+            android:tint="#ffffff"></ImageButton>
 
     </RelativeLayout>
 

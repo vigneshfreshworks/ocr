@@ -3,6 +3,7 @@ package com.example.ocrlibrary;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.ml.vision.FirebaseVision;
@@ -47,23 +49,27 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class CameraViewActivity extends AppCompatActivity implements View.OnTouchListener, GestureDetector.OnGestureListener {
+public class CameraViewActivity extends AppCompatActivity implements View.OnTouchListener, GestureDetector.OnGestureListener, View.OnClickListener {
 
     CameraView camera;
     FrameLayout frameLayout;
-    RelativeLayout layout, captureGallaryBtn, barcodeScannerOverlayView, cameraLayout, qrCodeLayout, barcodeLayout;
+    RelativeLayout layout, captureGallaryBtn, barcodeScannerOverlayView, cameraLayout, qrCodeLayout, barcodeLayout, dynamicLayout;
     ImageButton captureButton, gallary, closeBtn, flashButton;
     View qrCodeBoundry;
     boolean isDetected = false;
     FirebaseVisionBarcodeDetectorOptions options;
     FirebaseVisionBarcodeDetector detector;
     GestureDetector mGestureDetector;
-    TextView centerTextView, scannerText;
+    TextView centerTextView, scannerText, dynamic_center_text, dynamic_right_text, dynamic_left_text;
     public static final int IMAGE_PICK_CODE = 1000;
     public static final int PERMISSION_CODE = 1001;
     static Date currentTime;
     String scannerResult;
-
+    //String[] scanner_options = {"QR CODE", "BAR CODE"};
+    //String[] scanner_options = {"CAMERA", "QR CODE"};
+    //String[] scanner_options = {"CAMERA", "BAR CODE"};
+    //String[] scanner_options = {"QR CODE"};
+    String[] scanner_options = {"CAMERA", "QR CODE", "BAR CODE"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,24 +90,21 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
         cameraLayout = findViewById(R.id.overlay_camera);
         qrCodeLayout = findViewById(R.id.overlay_qrCode);
         barcodeLayout = findViewById(R.id.overlay_barcode);
+        dynamicLayout = findViewById(R.id.overlay_dynamic);
         centerTextView = findViewById(R.id.center_textview_camera);
         flashButton = findViewById(R.id.flash_btn);
         scannerText = findViewById(R.id.scannerText);
-        mGestureDetector = new GestureDetector(this, this);
+        dynamic_center_text = findViewById(R.id.center_textview_dynamic);
+        dynamic_right_text = findViewById(R.id.right);
+        dynamic_left_text = findViewById(R.id.left);
 
+        mGestureDetector = new GestureDetector(this, this);
         getSupportActionBar().hide();
         getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         );
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-
-        captureButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                camera.takePicture();
-            }
-        });
         camera.setPictureFormat(PictureFormat.JPEG);
         camera.addCameraListener(new CameraListener() {
             @Override
@@ -120,22 +123,6 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
                     }
                 });
 
-            }
-        });
-        gallary.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-                        String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
-                        requestPermissions(permissions, PERMISSION_CODE);
-
-                    } else {
-                        pickImageFromGallary();
-                    }
-                } else {
-                    pickImageFromGallary();
-                }
             }
         });
         flashButton.setOnClickListener(new View.OnClickListener() {
@@ -157,8 +144,39 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
             }
         });
         camera.setOnTouchListener(this);
-        barcodeLayout.setVisibility(View.INVISIBLE);
-        qrCodeLayout.setVisibility(View.INVISIBLE);
+        gallary.setOnClickListener(this);
+        captureButton.setOnClickListener(this);
+        if (scanner_options.length == 3) {
+            cameraLayout.setVisibility(View.VISIBLE);
+            barcodeLayout.setVisibility(View.INVISIBLE);
+            qrCodeLayout.setVisibility(View.INVISIBLE);
+            dynamicLayout.setVisibility(View.INVISIBLE);
+        } else if (scanner_options.length < 3) {
+            cameraLayout.setVisibility(View.INVISIBLE);
+            barcodeLayout.setVisibility(View.INVISIBLE);
+            qrCodeLayout.setVisibility(View.INVISIBLE);
+            dynamicLayout.setVisibility(View.VISIBLE);
+            if (scanner_options.length == 2) {
+                dynamic_center_text.setText(scanner_options[0]);
+                dynamic_right_text.setText(scanner_options[1]);
+                if (scanner_options[0] == "QR CODE") {
+                    setQrCodeLayout();
+                }
+                else if(scanner_options[0] == "BAR CODE") {
+                    setBarcodeLayout();
+                }
+            }
+            if (scanner_options.length == 1) {
+                dynamic_center_text.setText(scanner_options[0]);
+                if (scanner_options[0] == "QR CODE") {
+                    setQrCodeLayout();
+                } else if (scanner_options[0] == "BAR CODE") {
+                    setBarcodeLayout();
+                } else {
+                    setCameraLayout();
+                }
+            }
+        }
     }
 
     @Override
@@ -286,8 +304,8 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        int SWIPE_THRESHOLD = 10;
-        int SWIPE_VELOCITY_THRESHOLD = 100;
+        int SWIPE_THRESHOLD = 180;
+        int SWIPE_VELOCITY_THRESHOLD = 50;
         boolean result = true;
         try {
             float diffY = e2.getY() - e1.getY();
@@ -295,16 +313,42 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
             if (Math.abs(diffX) > Math.abs(diffY)) {
                 if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
                     if (diffX > 0) {
-                        if (centerTextView.getText().toString().equals("BAR CODE")) {
-                            barCodeToQRCodeTransition();
-                        } else if (centerTextView.getText().toString().equals("QR CODE")) {
-                            qrCodeToCameraTransition();
+                        if (scanner_options.length == 3) {
+                            if (centerTextView.getText().toString().equals("BAR CODE")) {
+                                barCodeToQRCodeTransition();
+                            } else if (centerTextView.getText().toString().equals("QR CODE")) {
+                                qrCodeToCameraTransition();
+                            }
+                        } else if (scanner_options.length == 2) {
+                            if (dynamic_center_text.getText().toString().equals("QR CODE")
+                                    && dynamic_left_text.getText().toString().equals("CAMERA")) {
+                                qrCodeToCameraTransition();
+                            } else if (dynamic_center_text.getText().toString().equals("BAR CODE")
+                                    && dynamic_left_text.getText().toString().equals("QR CODE")) {
+                                barCodeToQRCodeTransition();
+                            } else if (dynamic_center_text.getText().toString().equals("BAR CODE")
+                                    && dynamic_left_text.getText().toString().equals("CAMERA")) {
+                                barCodeToCameraTransition();
+                            }
                         }
                     } else {
-                        if (centerTextView.getText().toString().equals("CAMERA")) {
-                            cameraToQRCodeTransition();
-                        } else if (centerTextView.getText().toString().equals("QR CODE")) {
-                            qrCodeToBarCodeTransition();
+                        if (scanner_options.length == 3) {
+                            if (centerTextView.getText().toString().equals("CAMERA")) {
+                                cameraToQRCodeTransition();
+                            } else if (centerTextView.getText().toString().equals("QR CODE")) {
+                                qrCodeToBarCodeTransition();
+                            }
+                        } else if (scanner_options.length == 2) {
+                            if (dynamic_center_text.getText().equals("CAMERA")
+                                    && dynamic_right_text.getText().toString().equals("QR CODE")) {
+                                cameraToQRCodeTransition();
+                            } else if (dynamic_center_text.getText().toString().equals("QR CODE")
+                                    && dynamic_right_text.getText().toString().equals("BAR CODE")) {
+                                qrCodeToBarCodeTransition();
+                            } else if (dynamic_center_text.getText().equals("CAMERA")
+                                    && dynamic_right_text.getText().toString().equals("BAR CODE")) {
+                                cameraToBarCodeTransition();
+                            }
                         }
                     }
                     result = true;
@@ -316,13 +360,61 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
         return result;
     }
 
-    public void cameraToQRCodeTransition() {
+    public void setCameraLayout() {
+        captureButton.setEnabled(true);
+        gallary.setEnabled(true);
+    }
+
+    public void setQrCodeLayout() {
         qrCodeBoundry.setVisibility(View.VISIBLE);
-        cameraLayout.setVisibility(View.INVISIBLE);
-        qrCodeLayout.setVisibility(View.VISIBLE);
-        barcodeLayout.setVisibility(View.INVISIBLE);
-        centerTextView = findViewById(R.id.center_textview_qrcode);
         scannerText.setVisibility(View.VISIBLE);
+        captureButton.setEnabled(false);
+        gallary.setEnabled(false);
+        camera.addFrameProcessor(new FrameProcessor() {
+            @Override
+            public void process(@NonNull Frame frame) {
+                processImage(getVisionImageFromFrame(frame));
+            }
+        });
+        options = new FirebaseVisionBarcodeDetectorOptions.Builder()
+                .setBarcodeFormats(FirebaseVisionBarcode.FORMAT_QR_CODE)
+                .build();
+        detector = FirebaseVision.getInstance().getVisionBarcodeDetector(options);
+    }
+
+    public void setBarcodeLayout() {
+        frameLayout.addView(barcodeScannerOverlayView);
+        scannerText.setVisibility(View.INVISIBLE);
+        captureButton.setEnabled(false);
+        gallary.setEnabled(false);
+        camera.addFrameProcessor(new FrameProcessor() {
+            @Override
+            public void process(@NonNull Frame frame) {
+                processImage(getVisionImageFromFrame(frame));
+            }
+        });
+        options = new FirebaseVisionBarcodeDetectorOptions.Builder()
+                .setBarcodeFormats(FirebaseVisionBarcode.FORMAT_CODABAR, FirebaseVisionBarcode.FORMAT_CODE_128)
+                .build();
+
+        detector = FirebaseVision.getInstance().getVisionBarcodeDetector(options);
+    }
+
+    public void cameraToQRCodeTransition() {
+        if (scanner_options.length == 3) {
+            cameraLayout.setVisibility(View.INVISIBLE);
+            qrCodeLayout.setVisibility(View.VISIBLE);
+            barcodeLayout.setVisibility(View.INVISIBLE);
+            centerTextView = findViewById(R.id.center_textview_qrcode);
+        } else {
+            scannerText.setVisibility(View.VISIBLE);
+            dynamic_center_text.setText("QR CODE");
+            dynamic_left_text.setText("CAMERA");
+            dynamic_right_text.setText("");
+        }
+        qrCodeBoundry.setVisibility(View.VISIBLE);
+        captureButton.setEnabled(false);
+        gallary.setEnabled(false);
         camera.addFrameProcessor(new FrameProcessor() {
             @Override
             public void process(@NonNull Frame frame) {
@@ -336,23 +428,38 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
     }
 
     public void qrCodeToCameraTransition() {
+        if (scanner_options.length == 3) {
+            cameraLayout.setVisibility(View.VISIBLE);
+            barcodeLayout.setVisibility(View.INVISIBLE);
+            qrCodeLayout.setVisibility(View.INVISIBLE);
+            centerTextView = findViewById(R.id.center_textview_camera);
+        } else {
+            scannerText.setVisibility(View.INVISIBLE);
+            dynamic_center_text.setText("CAMERA");
+            dynamic_right_text.setText("QR CODE");
+            dynamic_left_text.setText("");
+        }
         qrCodeBoundry.setVisibility(View.INVISIBLE);
-        cameraLayout.setVisibility(View.VISIBLE);
-        barcodeLayout.setVisibility(View.INVISIBLE);
-        qrCodeLayout.setVisibility(View.INVISIBLE);
-        centerTextView = findViewById(R.id.center_textview_camera);
-        scannerText.setVisibility(View.INVISIBLE);
+        captureButton.setEnabled(true);
+        gallary.setEnabled(true);
     }
 
-
     public void qrCodeToBarCodeTransition() {
+        if (scanner_options.length == 3) {
+            qrCodeLayout.setVisibility(View.INVISIBLE);
+            cameraLayout.setVisibility(View.INVISIBLE);
+            barcodeLayout.setVisibility(View.VISIBLE);
+            centerTextView = findViewById(R.id.center_textview_barcode);
+        } else {
+            dynamic_center_text.setText("BAR CODE");
+            dynamic_right_text.setText("");
+            dynamic_left_text.setText("QR CODE");
+        }
         qrCodeBoundry.setVisibility(View.INVISIBLE);
         frameLayout.addView(barcodeScannerOverlayView);
-        barcodeLayout.setVisibility(View.VISIBLE);
-        qrCodeLayout.setVisibility(View.INVISIBLE);
-        cameraLayout.setVisibility(View.INVISIBLE);
-        centerTextView = findViewById(R.id.center_textview_barcode);
         scannerText.setVisibility(View.INVISIBLE);
+        captureButton.setEnabled(false);
+        gallary.setEnabled(false);
         camera.addFrameProcessor(new FrameProcessor() {
             @Override
             public void process(@NonNull Frame frame) {
@@ -367,24 +474,64 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
     }
 
     public void barCodeToQRCodeTransition() {
+        if (scanner_options.length == 3) {
+            qrCodeLayout.setVisibility(View.VISIBLE);
+            cameraLayout.setVisibility(View.INVISIBLE);
+            barcodeLayout.setVisibility(View.INVISIBLE);
+            centerTextView = findViewById(R.id.center_textview_qrcode);
+        } else {
+            dynamic_center_text.setText("QR CODE");
+            dynamic_right_text.setText("BAR CODE");
+            dynamic_left_text.setText("");
+        }
         frameLayout.removeView(barcodeScannerOverlayView);
         qrCodeBoundry.setVisibility(View.VISIBLE);
-        qrCodeLayout.setVisibility(View.VISIBLE);
-        cameraLayout.setVisibility(View.INVISIBLE);
-        barcodeLayout.setVisibility(View.INVISIBLE);
         scannerText.setVisibility(View.VISIBLE);
-        centerTextView = findViewById(R.id.center_textview_qrcode);
+        captureButton.setEnabled(false);
+        gallary.setEnabled(false);
         camera.addFrameProcessor(new FrameProcessor() {
             @Override
             public void process(@NonNull Frame frame) {
                 processImage(getVisionImageFromFrame(frame));
             }
         });
-
         options = new FirebaseVisionBarcodeDetectorOptions.Builder()
                 .setBarcodeFormats(FirebaseVisionBarcode.FORMAT_QR_CODE)
                 .build();
         detector = FirebaseVision.getInstance().getVisionBarcodeDetector(options);
+    }
+
+    public void cameraToBarCodeTransition() {
+        if (scanner_options.length == 2) {
+            dynamic_center_text.setText("BAR CODE");
+            dynamic_right_text.setText("");
+            dynamic_left_text.setText("CAMERA");
+        }
+        frameLayout.addView(barcodeScannerOverlayView);
+        scannerText.setVisibility(View.INVISIBLE);
+        camera.addFrameProcessor(new FrameProcessor() {
+            @Override
+            public void process(@NonNull Frame frame) {
+                processImage(getVisionImageFromFrame(frame));
+            }
+        });
+        captureButton.setEnabled(false);
+        gallary.setEnabled(false);
+        options = new FirebaseVisionBarcodeDetectorOptions.Builder()
+                .setBarcodeFormats(FirebaseVisionBarcode.FORMAT_CODABAR, FirebaseVisionBarcode.FORMAT_CODE_128)
+                .build();
+        detector = FirebaseVision.getInstance().getVisionBarcodeDetector(options);
+    }
+
+    public void barCodeToCameraTransition() {
+        if (scanner_options.length == 2) {
+            dynamic_center_text.setText("CAMERA");
+            dynamic_right_text.setText("BAR CODE");
+            dynamic_left_text.setText("");
+        }
+        captureButton.setEnabled(true);
+        gallary.setEnabled(true);
+        frameLayout.removeView(barcodeScannerOverlayView);
     }
 
     public void pickImageFromGallary() {
@@ -427,5 +574,24 @@ public class CameraViewActivity extends AppCompatActivity implements View.OnTouc
                 .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
         return cursor.getString(column_index);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.captureButton) {
+            camera.takePicture();
+        } else if (v.getId() == R.id.gallary) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                    String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
+                    requestPermissions(permissions, PERMISSION_CODE);
+
+                } else {
+                    pickImageFromGallary();
+                }
+            } else {
+                pickImageFromGallary();
+            }
+        }
     }
 }
