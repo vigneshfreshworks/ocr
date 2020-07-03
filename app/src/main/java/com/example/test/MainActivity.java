@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         startImageActivity = findViewById(R.id.start_image_activity);
         suggestionsView = findViewById(R.id.suggestionsList);
         suggestionsCard = findViewById(R.id.bottomView);
-
         List<EditText> editTextList = new ArrayList<EditText>();
         editTextList.add(assetName);
         editTextList.add(assetId);
@@ -187,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
                 croppedUri = (Uri) data.getExtras().get("uri");
             }
         }
-        if (requestCode == HIGHLIGHT_VIEW_REQESTCODE && resultCode == 101 ) {
+        if (requestCode == HIGHLIGHT_VIEW_REQESTCODE && resultCode == 101) {
             focusedView.setText(data.getStringExtra("result"));
         }
 
